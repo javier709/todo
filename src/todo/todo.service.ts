@@ -2,6 +2,8 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { Todo } from './entity/todo.entity';
 import { CreateTodoInput } from './dto/inputs/create-todo.input';
 import { UpdateTodoInput } from './dto/inputs/update-todo.input';
+import { StatusArgs } from './dto/args/status.args';
+import { todo } from 'node:test';
 
 @Injectable()
 export class TodoService {
@@ -11,11 +13,31 @@ export class TodoService {
         { id: 1, description: 'Piedra del Alma'   , done: false },
         { id: 2, description: 'Piedra del Espacio', done: true },
         { id: 3, description: 'Piedra del Poder'  , done: false },
-
+        { id: 4, description: 'Piedra del Tiempo' , done: false },
     ];
 
-    findAll(): Todo[] {
+    get totalTodos() {
+        return this.todos.length; // Retorna el numero de todos que tengo en el arreglo
+    }
+
+    get pendingTodos() {
+        return this.todos.filter( todo => todo.done === false ).length; // Retorna el numero de todos que tengo en el arreglo
+    }
+
+    get completedTodos() {
+        return this.todos.filter( todo => todo.done === true ).length; // Retorna el numero de todos que tengo en el arreglo
+    }
+
+
+
+    findAll( statusArgs: StatusArgs ): Todo[] {
+
+        const { status } = statusArgs;
+        if( status !== undefined ) return this.todos.filter( todo => todo.done === status );
+        
+        
         return this.todos;
+    
     }
 
     findOne( id: number  ): Todo {
